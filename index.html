@@ -44,6 +44,14 @@
     .full { grid-column: 1 / -1; }
     .formula { font-family: Consolas, Monaco, monospace; background: #111827; color: #f9fafb; padding: 13px 14px; border-radius: 10px; overflow-x: auto; margin: 8px 0 0; }
     .button-link { display: inline-block; margin-top: 8px; padding: 11px 14px; background: var(--accent); color: var(--white); text-decoration: none; border-radius: 10px; font-weight: 800; }
+    .video-preview { position: relative; display: block; margin-top: 10px; border-radius: 12px; overflow: hidden; background: #111827; color: var(--white); text-decoration: none; aspect-ratio: 16 / 9; box-shadow: 0 6px 16px rgba(31,41,51,.16); }
+    .video-preview img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s ease, opacity .2s ease; }
+    .video-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 42%, rgba(0,0,0,.78)); }
+    .video-preview:hover img, .video-preview:focus img { transform: scale(1.025); opacity: .92; }
+    .video-preview:focus { outline: 3px solid #7cc4ef; outline-offset: 3px; }
+    .video-play { position: absolute; z-index: 2; left: 50%; top: 45%; transform: translate(-50%, -50%); width: 58px; height: 42px; border-radius: 12px; background: #ff0033; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+    .video-play::after { content: ""; position: absolute; left: 23px; top: 12px; border-left: 16px solid white; border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+    .video-label { position: absolute; z-index: 2; left: 14px; right: 14px; bottom: 12px; font-weight: 800; font-size: 14px; }
     .download-link { display: inline-block; margin-top: 14px; padding: 13px 17px; background: var(--success); color: var(--white); text-decoration: none; border-radius: 10px; font-weight: 800; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
     th, td { border: 1px solid var(--line); padding: 9px; text-align: left; }
@@ -123,6 +131,14 @@
   </div>
 
   <script>
+    document.querySelectorAll('a.button-link[href*="youtube.com/watch"]').forEach(link => {
+      const videoId = new URL(link.href).searchParams.get('v');
+      if (!videoId) return;
+      link.className = 'video-preview';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', 'Watch this lesson on YouTube in a new tab');
+      link.innerHTML = `<img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" alt="" loading="lazy"><span class="video-play" aria-hidden="true"></span><span class="video-label">Watch lesson on YouTube ↗</span>`;
+    });
     const modules = Array.from(document.querySelectorAll('.module')).map(m => m.id);
     const buttons = Array.from(document.querySelectorAll('.nav-btn'));
     function showModule(id) { document.querySelectorAll('.module').forEach(m => m.classList.remove('active')); document.getElementById(id).classList.add('active'); buttons.forEach(b => b.classList.toggle('active', b.dataset.target === id)); window.scrollTo({ top: 0, behavior: 'smooth' }); }
